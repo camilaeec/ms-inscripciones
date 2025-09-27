@@ -1,21 +1,67 @@
-version: '3.8'
-services:
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Plantilla CloudFormation para MV del Microservicio de Inscripciones'
 
-  app:
-    build: .
-    ports:
-      - "3000:3000"
-    depends_on:
-      - mongo
-    environment:
-      - MONGO_URL=mongodb://mongo:27017/inscripciones
+Parameters:
+  KeyPairName:
+    Description: 'Nombre del key pair existente para conexión SSH'
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    ConstraintDescription: 'Debe ser el nombre de un key pair existente'
 
-volumes:
-  mongo_data:
-    driver: local
+Resources:
+  # Security Group que permite SSH y el puerto de la aplicación (3000)
+  InstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: 'Habilita SSH y acceso al microservicio de inscripciones'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0  # ⚠️ Considera restringir a tu IP en producción
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0   # Para el microservicio de inscripciones
+
+  # La instancia EC2
+  InscriptionServiceInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: ami-08d434e92c0cfa0c0  # Amazon Linux 2 (verifica en tu región)
+      InstanceType: t3.micro
+      KeyName: !Ref KeyPairName
+      SecurityGroupIds:
+        - !Ref InstanceSecurityGroup
+      Tags:
+        - Key: Name
+          Value: 'mv-microservicio-inscripciones'
+      # Script de User Data para instalar Docker, Docker Compose y desplegar
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          yum update -y
+          yum install -y docker git
+          service docker start
+          usermod -a -G docker ec2-user
+          
+          # Instalar Docker Compose
+          curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+          
+          # Clonar y desplegar el microservicio
+          su - ec2-user -c "
+            git clone https://github.com/camilaeec/ms-inscripciones.git /home/ec2-user/ms-inscripciones
+            cd /home/ec2-user/ms-inscripciones
+            docker-compose up -d
+          "
+
+Outputs:
+  InstanceId:
+    Description: 'ID de la instancia EC2'
+    Value: !Ref InscriptionServiceInstance
+  PublicIP:
+    Description: 'IP pública para conectarse a la instancia'
+    Value: !GetAtt InscriptionServiceInstance.PublicIp
+  ApplicationURL:
+    Description: 'URL del microservicio de inscripciones'
+    Value: !Sub 'http://${InscriptionServiceInstance.PublicIp}:3000'
