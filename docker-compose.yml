@@ -16,6 +16,17 @@ services:
     environment:
       - MONGO_URL=mongodb://mongo:27017/inscripciones
 
+  ingesta:
+    build: ./ingesta
+    environment:
+      - API_URL=http://app:3000
+      - S3_BUCKET=inscripciones-data-2025-camila
+      - AWS_REGION=us-east-1
+    volumes:
+      - ~/.aws:/root/.aws:ro  # Para credenciales AWS
+    depends_on:
+      - app
+    profiles: ["ingesta"]  # Solo se ejecuta cuando se especifica
+
 volumes:
   mongo_data:
-    driver: local

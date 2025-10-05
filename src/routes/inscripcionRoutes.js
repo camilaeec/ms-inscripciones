@@ -6,6 +6,13 @@ const {
   updateProgreso
 } = require('../controllers/inscripcionController');
 
+/**
+ * @swagger
+ * tags:
+ *   name: Inscripciones
+ *   description: Gestión de inscripciones estudiantiles
+ */
+
 router.get('/', getInscripciones);
 router.post('/', createInscripcion);
 router.patch('/:id/progreso', updateProgreso);

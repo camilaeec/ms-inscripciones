@@ -1,23 +1,21 @@
 {
   "name": "ms-inscripciones",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "docker:build": "docker build -t ms-inscripciones .",
+    "docker:run": "docker run -p 3000:3000 ms-inscripciones"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "express": "^5.1.0",
-    "mongoose": "^8.18.2"
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "cors": "^2.8.5",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
-  },
-  "scripts": {
-  "start": "node src/app.js",
-  "dev": "nodemon src/app.js"
-}
+  }
 }
