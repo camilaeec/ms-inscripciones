@@ -130,6 +130,43 @@ const updateProgreso = async (req, res) => {
   }
 };
 
+/**
+ * @swagger
+ * /inscripciones/{estudianteId}/{cursoId}:
+ *   get:
+ *     summary: Obtener inscripción específica
+ *     parameters:
+ *       - in: path
+ *         name: estudianteId
+ *         required: true
+ *       - in: path
+ *         name: cursoId
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Inscripción encontrada
+ *       404:
+ *         description: Inscripción no encontrada
+ */
+const getInscripcionByEstudianteAndCurso = async (req, res) => {
+  try {
+    const { estudianteId, cursoId } = req.params;
+    
+    const inscripcion = await Inscripcion.findOne({
+      estudianteId,
+      cursoId: parseInt(cursoId)
+    });
+
+    if (!inscripcion) {
+      return res.status(404).json({ message: 'Inscripción no encontrada' });
+    }
+
+    res.json(inscripcion);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getInscripciones,
   createInscripcion,

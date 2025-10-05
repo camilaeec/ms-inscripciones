@@ -14,6 +14,7 @@ const {
  */
 
 router.get('/', getInscripciones);
+router.get('/:estudianteId/:cursoId', getInscripcionByEstudianteAndCurso);
 router.post('/', createInscripcion);
 router.patch('/:id/progreso', updateProgreso);
 
