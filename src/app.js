@@ -67,7 +67,7 @@ app.get('/health', (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Servidor en puerto ${PORT}`);
-  console.log(`📚 Swagger: http://localhost:${PORT}/api-docs`);
-  console.log(`🌐 Producción: http://${process.env.EC2_IP || 'IP_NO_CONFIGURADA'}:${PORT}/api-docs`);
+  console.log(`🚀 Servidor en puerto ${PORT} (escuchando en 0.0.0.0)`);
+  console.log(`📚 Swagger Local: http://localhost:${PORT}/api-docs`);
+  console.log(`🌐 Swagger Producción: http://${process.env.EC2_IP || 'IP_NO_CONFIGURADA'}:${PORT}/api-docs`);
 });

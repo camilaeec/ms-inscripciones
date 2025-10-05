@@ -16,7 +16,7 @@ services:
     environment:
       - MONGO_URL=mongodb://mongo:27017/inscripciones
       - NODE_ENV=production
-      - EC2_IP=3.81.42.197  # ← AGREGADO
+      - EC2_IP=3.81.42.197  # CAMBIAR POR LA IP DE TU SERVIDOR EC2
 
   ingesta:
     build: ./ingesta
