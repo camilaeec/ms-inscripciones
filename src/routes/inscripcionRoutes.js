@@ -3,7 +3,8 @@ const router = express.Router();
 const {
   getInscripciones,
   createInscripcion,
-  updateProgreso
+  updateProgreso,
+  getInscripcionByEstudianteAndCurso
 } = require('../controllers/inscripcionController');
 
 /**
