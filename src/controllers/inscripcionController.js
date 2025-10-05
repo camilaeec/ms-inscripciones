@@ -170,5 +170,6 @@ const getInscripcionByEstudianteAndCurso = async (req, res) => {
 module.exports = {
   getInscripciones,
   createInscripcion,
-  updateProgreso
+  updateProgreso,
+  getInscripcionByEstudianteAndCurso
 };
